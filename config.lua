@@ -42,7 +42,7 @@ Config.Registers = {
 
 
 -- Time until safe opens up
-Config.SafeWait (60000 * 3)
+Config.SafeWait = (60000 * 3)
 
 Config.Safes = {
     [1] = {
