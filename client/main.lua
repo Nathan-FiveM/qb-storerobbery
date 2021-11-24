@@ -95,7 +95,7 @@ AddEventHandler('police:SetCopCount', function(amount)
 end)
 
 RegisterNetEvent('lockpicks:UseLockpick')
-AddEventHandler('lockpicks:UseLockpick', function(item)
+AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
     for k, v in pairs(Config.Registers) do
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
@@ -103,8 +103,7 @@ AddEventHandler('lockpicks:UseLockpick', function(item)
         if dist <= 1 and not Config.Registers[k].robbed then
             if CurrentCops >= Config.MinimumStoreRobberyPolice then
                 currentRegister = k
-                local itemname = item.name
-                if itemname == "advancedlockpick" then
+                if isAdvanced then
                     usingAdvanced = true
                 else
                     usingAdvanced = false
