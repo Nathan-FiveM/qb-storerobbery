@@ -131,14 +131,11 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                                 ClearPedTasks(PlayerPedId())
                                 TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, true)            
                                 currentRegister = 0
-                                TriggerServerEvent('qb-robbery:server:succesHeist')
-                                TriggerServerEvent('qb-bankrobbery:server:RemoveLaptopUse', item)
                             end, function() -- Cancel
                                 openingDoor = false
                                 ClearPedTasks(PlayerPedId())
                                 QBCore.Functions.Notify("Process canceled..", "error")
                                 currentRegister = 0
-                                TriggerServerEvent('qb-bankrobbery:server:RemoveLaptopUse', item)
                             end)
                             Citizen.CreateThread(function()
                                 while openingDoor do
@@ -149,7 +146,6 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                         end
                     else
                         QBCore.Functions.Notify("You failed to lockpick the till!")
-                        TriggerServerEvent('qb-bankrobbery:server:RemoveLaptopUse', item)
                         if usingAdvanced then
                             if math.random(1, 100) < 5 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "advancedlockpick", 1)
@@ -194,14 +190,11 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                                 ClearPedTasks(PlayerPedId())
                                 TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, true)            
                                 currentRegister = 0
-                                TriggerServerEvent('qb-robbery:server:succesHeist')
-                                TriggerServerEvent('qb-bankrobbery:server:RemoveLaptopUse', item)
                             end, function() -- Cancel
                                 openingDoor = false
                                 ClearPedTasks(PlayerPedId())
                                 QBCore.Functions.Notify("Process canceled..", "error")
                                 currentRegister = 0
-                                TriggerServerEvent('qb-bankrobbery:server:RemoveLaptopUse', item)
                             end)
                             Citizen.CreateThread(function()
                                 while openingDoor do
@@ -212,7 +205,6 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                         end
                     else
                         QBCore.Functions.Notify("You failed to lockpick the till!")
-                        TriggerServerEvent('qb-bankrobbery:server:RemoveLaptopUse', item)
                         if usingAdvanced then
                             if math.random(1, 100) < 5 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "advancedlockpick", 1)
