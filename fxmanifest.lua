@@ -5,8 +5,7 @@ description 'QB-StoreRobbery'
 version '1.1.0'
 editor 'Nathan#8860'
 
-shared_scripts { 
-	'@qb-core/import.lua',
+shared_scripts {
 	'config.lua'
 }
 
