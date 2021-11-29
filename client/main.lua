@@ -1,3 +1,4 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local uiOpen = false
 local currentRegister   = 0
 local currentSafe = 0
@@ -10,7 +11,7 @@ local SafeCracked = false
 local Cracked = false
 
 --// THREADS \\ --
-Citizen.CreateThread(function()
+CreateThread(function()
     for k, _ in pairs(Config.Safes) do
         exports['qb-target']:AddCircleZone(Config.Safes[k], vector3(Config.Safes[k][1].xyz), 1.0, {
             name = Config.Safes[k],
@@ -26,7 +27,7 @@ Citizen.CreateThread(function()
                 {
                     type = "client",
                     event = "qb-storerobbery:client:collectsafe",
-                    icon = "fas fa-lock",
+                    icon = "fas fa-award",
                     label = "Grab Goods",
                 },
             },
@@ -54,16 +55,16 @@ Citizen.CreateThread(function()
     end ]]
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Wait(1000)
     if QBCore.Functions.GetPlayerData().job ~= nil and next(QBCore.Functions.GetPlayerData().job) then
         PlayerJob = QBCore.Functions.GetPlayerData().job
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
-        Citizen.Wait(1000 * 60 * 5)
+        Wait(1000 * 60 * 5)
         if copsCalled then
             copsCalled = false
         end
@@ -72,30 +73,25 @@ end)
 --// THREADS \\ --
 
 --// EVENTS \\ --
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
-AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     PlayerJob = QBCore.Functions.GetPlayerData().job
     onDuty = true
 end)
 
-RegisterNetEvent('QBCore:Client:SetDuty')
-AddEventHandler('QBCore:Client:SetDuty', function(duty)
+RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
     onDuty = duty
 end)
 
-RegisterNetEvent('QBCore:Client:OnJobUpdate')
-AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
     onDuty = true
 end)
 
-RegisterNetEvent('police:SetCopCount')
-AddEventHandler('police:SetCopCount', function(amount)
+RegisterNetEvent('police:SetCopCount', function(amount)
     CurrentCops = amount
 end)
 
-RegisterNetEvent('lockpicks:UseLockpick')
-AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
+RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
     for k, v in pairs(Config.Registers) do
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
@@ -137,10 +133,10 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                                 QBCore.Functions.Notify("Process canceled..", "error")
                                 currentRegister = 0
                             end)
-                            Citizen.CreateThread(function()
+                            CreateThread(function()
                                 while openingDoor do
-                                    TriggerServerEvent('qb-hud:Server:GainStress', math.random(1, 3))
-                                    Citizen.Wait(10000)
+                                    TriggerServerEvent('hud:Server:GainStress', math.random(1, 3))
+                                    Wait(10000)
                                 end
                             end)
                         end
@@ -150,14 +146,14 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                             if math.random(1, 100) < 5 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "advancedlockpick", 1)
                                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["advancedlockpick"], "remove")
-                                TriggerServerEvent('qb-hud:Server:GainStress', math.random(1, 2))
+                                TriggerServerEvent('hud:Server:GainStress', math.random(1, 2))
                                 QBCore.Functions.Notify("The lockpick bent out of shape...", "error")
                             end
                         else
                             if math.random(1, 100) < 25 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "lockpick", 1)
                                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["lockpick"], "remove")
-                                TriggerServerEvent('qb-hud:Server:GainStress', math.random(2, 4))
+                                TriggerServerEvent('hud:Server:GainStress', math.random(2, 4))
                                 QBCore.Functions.Notify("The lockpick bent out of shape...", "error")
                             end
                         end
@@ -196,10 +192,10 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                                 QBCore.Functions.Notify("Process canceled..", "error")
                                 currentRegister = 0
                             end)
-                            Citizen.CreateThread(function()
+                            CreateThread(function()
                                 while openingDoor do
-                                    TriggerServerEvent('qb-hud:Server:GainStress', math.random(1, 3))
-                                    Citizen.Wait(10000)
+                                    TriggerServerEvent('hud:Server:GainStress', math.random(1, 3))
+                                    Wait(10000)
                                 end
                             end)
                         end
@@ -209,13 +205,13 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                             if math.random(1, 100) < 5 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "advancedlockpick", 1)
                                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["advancedlockpick"], "remove")
-                                TriggerServerEvent('qb-hud:Server:GainStress', math.random(1, 2))
+                                TriggerServerEvent('hud:Server:GainStress', math.random(1, 2))
                             end
                         else
                             if math.random(1, 100) < 25 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "lockpick", 1)
                                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["lockpick"], "remove")
-                                TriggerServerEvent('qb-hud:Server:GainStress', math.random(2, 4))
+                                TriggerServerEvent('hud:Server:GainStress', math.random(2, 4))
                             end
                         end
                         if (IsWearingHandshoes() and math.random(1, 100) <= 25) then
@@ -230,7 +226,7 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
                     TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
                 end
                 if not copsCalled then
-                    local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+                    local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
                     local street1 = GetStreetNameFromHashKey(s1)
                     local street2 = GetStreetNameFromHashKey(s2)
                     local streetLabel = street1
@@ -248,13 +244,11 @@ AddEventHandler('lockpicks:UseLockpick', function(isAdvanced)
     end
 end)
 
-RegisterNetEvent('qb-storerobbery:client:checkmoney')
-AddEventHandler('qb-storerobbery:client:checkmoney', function()
+RegisterNetEvent('qb-storerobbery:client:checkmoney', function()
     TriggerServerEvent('qb-storerobbery:server:CheckItem')
 end)
 
-RegisterNetEvent('qb-storerobbery:client:hacksafe')
-AddEventHandler('qb-storerobbery:client:hacksafe', function()
+RegisterNetEvent('qb-storerobbery:client:hacksafe', function()
     local pos = GetEntityCoords(PlayerPedId())
     for safe,_ in pairs(Config.Safes) do
         local dist = #(pos - Config.Safes[safe][1].xyz)
@@ -274,13 +268,11 @@ AddEventHandler('qb-storerobbery:client:hacksafe', function()
     end
 end)
 
-RegisterNetEvent('qb-storerobbery:client:collectsafe')
-AddEventHandler('qb-storerobbery:client:collectsafe', function()
+RegisterNetEvent('qb-storerobbery:client:collectsafe', function()
     CollectSafeMoney()
 end)
 
-RegisterNetEvent('qb-storerobbery:client:setRegisterStatus')
-AddEventHandler('qb-storerobbery:client:setRegisterStatus', function(batch, val)
+RegisterNetEvent('qb-storerobbery:client:setRegisterStatus', function(batch, val)
     -- Has to be a better way maybe like adding a unique id to identify the register
     if(type(batch) ~= "table") then
         Config.Registers[batch] = val
@@ -291,13 +283,11 @@ AddEventHandler('qb-storerobbery:client:setRegisterStatus', function(batch, val)
     end
 end)
 
-RegisterNetEvent('qb-storerobbery:client:setSafeStatus')
-AddEventHandler('qb-storerobbery:client:setSafeStatus', function(safe, bool)
+RegisterNetEvent('qb-storerobbery:client:setSafeStatus', function(safe, bool)
     Config.Safes[safe].robbed = bool
 end)
 
-RegisterNetEvent('qb-storerobbery:client:robberyCall')
-AddEventHandler('qb-storerobbery:client:robberyCall', function(type, key, streetLabel, coords)
+RegisterNetEvent('qb-storerobbery:client:robberyCall', function(type, key, streetLabel, coords)
     if PlayerJob.name == "police" or PlayerJob.name == "bcso" and onDuty then
         local cameraId = 4
         if type == "safe" then
@@ -389,10 +379,10 @@ function lockpickTill()
                             QBCore.Functions.Notify("Process canceled..", "error")
                             currentRegister = 0
                         end)
-                        Citizen.CreateThread(function()
+                        CreateThread(function()
                             while openingDoor do
-                                TriggerServerEvent('qb-hud:Server:GainStress', math.random(1, 3))
-                                Citizen.Wait(10000)
+                                TriggerServerEvent('hud:Server:GainStress', math.random(1, 3))
+                                Wait(10000)
                             end
                         end)
                     end
@@ -410,7 +400,7 @@ function lockpickTill()
                 end
 
                 if not copsCalled then
-                    local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+                    local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
                     local street1 = GetStreetNameFromHashKey(s1)
                     local street2 = GetStreetNameFromHashKey(s2)
                     local streetLabel = street1
@@ -435,7 +425,7 @@ function IsWearingHandshoes()
     local model = GetEntityModel(PlayerPedId())
     local retval = true
 
-    if model == GetHashKey("mp_m_freemode_01") then
+    if model == `mp_m_freemode_01` then
         if Config.MaleNoHandshoes[armIndex] ~= nil and Config.MaleNoHandshoes[armIndex] then
             retval = false
         end
@@ -466,7 +456,7 @@ end
 function loadAnimDict(dict)
     while (not HasAnimDictLoaded(dict)) do
         RequestAnimDict(dict)
-        Citizen.Wait(100)
+        Wait(100)
     end
 end
 
@@ -474,10 +464,10 @@ function takeAnim()
     local ped = PlayerPedId()
     while (not HasAnimDictLoaded("amb@prop_human_bum_bin@idle_b")) do
         RequestAnimDict("amb@prop_human_bum_bin@idle_b")
-        Citizen.Wait(100)
+        Wait(100)
     end
     TaskPlayAnim(ped, "amb@prop_human_bum_bin@idle_b", "idle_d", 8.0, 8.0, -1, 50, 0, false, false, false)
-    Citizen.Wait(2500)
+    Wait(2500)
     TaskPlayAnim(ped, "amb@prop_human_bum_bin@idle_b", "exit", 8.0, 8.0, -1, 50, 0, false, false, false)
 end
 
@@ -488,10 +478,10 @@ function LockpickDoorAnim(time)
     loadAnimDict("veh@break_in@0h@p_m_one@")
     TaskPlayAnim(PlayerPedId(), "veh@break_in@0h@p_m_one@", "low_force_entry_ds" ,3.0, 3.0, -1, 16, 0, false, false, false)
     openingDoor = true
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while openingDoor do
             TaskPlayAnim(PlayerPedId(), "veh@break_in@0h@p_m_one@", "low_force_entry_ds", 3.0, 3.0, -1, 16, 0, 0, 0, 0)
-            Citizen.Wait(2000)
+            Wait(2000)
             time = time - 2
             TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, false)
             if time <= 0 then
@@ -525,7 +515,7 @@ function MemoryGame()
                         function() -- Success
 
                             if math.random(1, 100) <= 35 then
-                                TriggerServerEvent('qb-hud:server:GainStress', math.random(5, 8))
+                                TriggerServerEvent('hud:server:GainStress', math.random(5, 8))
                             end
 
                             Cracked = true
@@ -534,7 +524,7 @@ function MemoryGame()
                             if currentSafe ~= 0 then
                                 if not Config.Safes[currentSafe].robbed then
                                     QBCore.Functions.Notify("Safe Cracked, wait nearby!")
-                                    Citizen.Wait(Config.SafeWait)
+                                    Wait(Config.SafeWait)
                                     if dist < 15 then
                                         SafeCracked = true
                                         Cracked = false
@@ -552,7 +542,7 @@ function MemoryGame()
                         function() -- Failure
 
                             if math.random(1, 100) <= 75 then
-                                TriggerServerEvent('qb-hud:server:GainStress', math.random(8, 15))
+                                TriggerServerEvent('hud:server:GainStress', math.random(8, 15))
                             end
 
                             SafeCracked = false
@@ -565,7 +555,7 @@ function MemoryGame()
 
                         if not copsCalled then
                             local pos = GetEntityCoords(PlayerPedId())
-                            local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
+                            local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
                             local street1 = GetStreetNameFromHashKey(s1)
                             local street2 = GetStreetNameFromHashKey(s2)
                             local streetLabel = street1
