@@ -1,14 +1,16 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-local uiOpen = false
-local currentRegister   = 0
+
+
+QBCore = exports['qb-core']:GetCoreObject()
+
+local currentRegister = 0
 local currentSafe = 0
 local copsCalled = false
 local CurrentCops = 0
 local PlayerJob = {}
-local onDuty = false
 local usingAdvanced = false
 local SafeCracked = false
 local Cracked = false
+local openingDoor = false
 
 --// THREADS \\ --
 CreateThread(function()
@@ -27,32 +29,13 @@ CreateThread(function()
                 {
                     type = "client",
                     event = "qb-storerobbery:client:collectsafe",
-                    icon = "fas fa-award",
+                    icon = "fas fa-lock",
                     label = "Grab Goods",
                 },
             },
             distance = 2.0
         })
     end
-
-    -- Still developing my backend code for item uses, doesn't apply when using target, feel free to use this if you have no item uses attached to your lockpicks :)
-
---[[     for k, _ in pairs(Config.Registers) do
-        exports['qb-target']:AddCircleZone(Config.Registers[k], vector3(Config.Registers[k][1].xyz), 1.0, {
-            name = Config.Registers[k],
-            debugPoly = false,
-        }, {
-            options = {
-                {
-                    type = "client",
-                    event = "qb-storerobbery:client:checkregister",
-                    icon = "fas fa-lock",
-                    label = "Search Register",
-                },
-            },
-            distance = 2.0
-        })
-    end ]]
 end)
 
 CreateThread(function()
@@ -75,16 +58,10 @@ end)
 --// EVENTS \\ --
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     PlayerJob = QBCore.Functions.GetPlayerData().job
-    onDuty = true
-end)
-
-RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
-    onDuty = duty
 end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
-    onDuty = true
 end)
 
 RegisterNetEvent('police:SetCopCount', function(amount)
@@ -100,18 +77,14 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
             if CurrentCops >= Config.MinimumStoreRobberyPolice then
                 currentRegister = k
                 if isAdvanced then
-                    usingAdvanced = true
-                else
-                    usingAdvanced = false
-                end
-                if usingAdvanced then
                     local seconds = math.random(8,12)
                     local circles = math.random(2,5)
                     local success = exports['qb-lock']:StartLockPickCircle(circles, seconds, success)
+
                     if success then
                         if currentRegister ~= 0 then
                             TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
-                            local lockpickTime = math.random(15000, 30000)
+                            local lockpickTime = math.random(60000, 120000)
                             LockpickDoorAnim(lockpickTime)
                             QBCore.Functions.Progressbar("search_register", "Emptying register..", lockpickTime, false, true, {
                                 disableMovement = true,
@@ -135,7 +108,7 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                             end)
                             CreateThread(function()
                                 while openingDoor do
-                                    TriggerServerEvent('hud:Server:GainStress', math.random(1, 3))
+                                    TriggerServerEvent('hud:server:gain:stress', math.random(1, 3))
                                     Wait(10000)
                                 end
                             end)
@@ -146,14 +119,14 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                             if math.random(1, 100) < 5 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "advancedlockpick", 1)
                                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["advancedlockpick"], "remove")
-                                TriggerServerEvent('hud:Server:GainStress', math.random(1, 2))
+                                TriggerServerEvent('hud:server:gain:stress', math.random(1, 2))
                                 QBCore.Functions.Notify("The lockpick bent out of shape...", "error")
                             end
                         else
                             if math.random(1, 100) < 25 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "lockpick", 1)
                                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["lockpick"], "remove")
-                                TriggerServerEvent('hud:Server:GainStress', math.random(2, 4))
+                                TriggerServerEvent('hud:server:gain:stress', math.random(2, 4))
                                 QBCore.Functions.Notify("The lockpick bent out of shape...", "error")
                             end
                         end
@@ -170,7 +143,7 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                     if success then
                         if currentRegister ~= 0 then
                             TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
-                            local lockpickTime = math.random(30000, 45000)
+                            local lockpickTime = math.random(90000, 180000)
                             LockpickDoorAnim(lockpickTime)
                             QBCore.Functions.Progressbar("search_register", "Emptying register..", lockpickTime, false, true, {
                                 disableMovement = true,
@@ -194,7 +167,7 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                             end)
                             CreateThread(function()
                                 while openingDoor do
-                                    TriggerServerEvent('hud:Server:GainStress', math.random(1, 3))
+                                    TriggerServerEvent('hud:server:gain:stress', math.random(1, 3))
                                     Wait(10000)
                                 end
                             end)
@@ -205,13 +178,13 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                             if math.random(1, 100) < 5 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "advancedlockpick", 1)
                                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["advancedlockpick"], "remove")
-                                TriggerServerEvent('hud:Server:GainStress', math.random(1, 2))
+                                TriggerServerEvent('hud:server:gain:stress', math.random(1, 2))
                             end
                         else
                             if math.random(1, 100) < 25 then
                                 TriggerServerEvent("QBCore:Server:RemoveItem", "lockpick", 1)
                                 TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["lockpick"], "remove")
-                                TriggerServerEvent('hud:Server:GainStress', math.random(2, 4))
+                                TriggerServerEvent('hud:server:gain:stress', math.random(2, 4))
                             end
                         end
                         if (IsWearingHandshoes() and math.random(1, 100) <= 25) then
@@ -238,7 +211,7 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                 end
 
             else
-                QBCore.Functions.Notify("Not Enough Police (2 Required)", "error")
+                QBCore.Functions.Notify("Not Enough Police (".. Config.MinimumStoreRobberyPolice .." Required)", "error")
             end
         end
     end
@@ -287,58 +260,6 @@ RegisterNetEvent('qb-storerobbery:client:setSafeStatus', function(safe, bool)
     Config.Safes[safe].robbed = bool
 end)
 
-RegisterNetEvent('qb-storerobbery:client:robberyCall', function(type, key, streetLabel, coords)
-    if PlayerJob.name == "police" or PlayerJob.name == "bcso" and onDuty then
-        local cameraId = 4
-        if type == "safe" then
-            cameraId = Config.Safes[key].camId
-        else
-            cameraId = Config.Registers[key].camId
-        end
-        PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-        TriggerEvent('qb-policealerts:client:AddPoliceAlert', {
-            timeOut = 5000,
-            alertTitle = "10-31 | Shop Robbery",
-            coords = {
-                x = coords.x,
-                y = coords.y,
-                z = coords.z,
-            },
-            details = {
-                [1] = {
-                    icon = '<i class="fas fa-video"></i>',
-                    detail = cameraId,
-                },
-                [2] = {
-                    icon = '<i class="fas fa-globe-europe"></i>',
-                    detail = streetLabel,
-                },
-            },
-            callSign = QBCore.Functions.GetPlayerData().metadata["callsign"],
-        })
-
-        local transG = 250
-        local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
-        SetBlipSprite(blip, 458)
-        SetBlipColour(blip, 1)
-        SetBlipDisplay(blip, 4)
-        SetBlipAlpha(blip, transG)
-        SetBlipScale(blip, 1.0)
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentString("10-31 | Shop Robbery")
-        EndTextCommandSetBlipName(blip)
-        while transG ~= 0 do
-            Wait(180 * 4)
-            transG = transG - 1
-            SetBlipAlpha(blip, transG)
-            if transG == 0 then
-                SetBlipSprite(blip, 2)
-                RemoveBlip(blip)
-                return
-            end
-        end
-    end
-end)
 --// EVENTS \\ --
 
 --// FUNCTIONS \\ --
@@ -372,7 +293,6 @@ function lockpickTill()
                             ClearPedTasks(PlayerPedId())
                             TriggerServerEvent('qb-storerobbery:server:takeMoney', currentRegister, true)            
                             currentRegister = 0
-                            TriggerServerEvent('qb-robbery:server:succesHeist')
                         end, function() -- Cancel
                             openingDoor = false
                             ClearPedTasks(PlayerPedId())
@@ -381,7 +301,7 @@ function lockpickTill()
                         end)
                         CreateThread(function()
                             while openingDoor do
-                                TriggerServerEvent('hud:Server:GainStress', math.random(1, 3))
+                                TriggerServerEvent('hud:server:gain:stress', math.random(1, 3))
                                 Wait(10000)
                             end
                         end)
@@ -412,7 +332,7 @@ function lockpickTill()
                 end
 
             else
-                QBCore.Functions.Notify("Not Enough Police (2 Required)", "error")
+                QBCore.Functions.Notify("Not Enough Police (".. Config.MinimumStoreRobberyPolice .." Required)", "error")
             end
         elseif dist <= 1 and Config.Registers[k].robbed then
             QBCore.Functions.Notify("This Register is empty", "error")
@@ -425,7 +345,7 @@ function IsWearingHandshoes()
     local model = GetEntityModel(PlayerPedId())
     local retval = true
 
-    if model == `mp_m_freemode_01` then
+    if model == GetHashKey("mp_m_freemode_01") then
         if Config.MaleNoHandshoes[armIndex] ~= nil and Config.MaleNoHandshoes[armIndex] then
             retval = false
         end
@@ -471,8 +391,6 @@ function takeAnim()
     TaskPlayAnim(ped, "amb@prop_human_bum_bin@idle_b", "exit", 8.0, 8.0, -1, 50, 0, false, false, false)
 end
 
-local openingDoor = false
-
 function LockpickDoorAnim(time)
     time = time / 1000
     loadAnimDict("veh@break_in@0h@p_m_one@")
@@ -515,7 +433,7 @@ function MemoryGame()
                         function() -- Success
 
                             if math.random(1, 100) <= 35 then
-                                TriggerServerEvent('hud:server:GainStress', math.random(5, 8))
+                                TriggerServerEvent('hud:server:gain:stress', math.random(5, 8))
                             end
 
                             Cracked = true
@@ -524,8 +442,8 @@ function MemoryGame()
                             if currentSafe ~= 0 then
                                 if not Config.Safes[currentSafe].robbed then
                                     QBCore.Functions.Notify("Safe Cracked, wait nearby!")
-                                    Wait(Config.SafeWait)
-                                    if dist < 15 then
+                                    Wait(300000)
+                                    if dist < 50 then
                                         SafeCracked = true
                                         Cracked = false
                                         QBCore.Functions.Notify("Go grab the loot", "success")
@@ -542,7 +460,7 @@ function MemoryGame()
                         function() -- Failure
 
                             if math.random(1, 100) <= 75 then
-                                TriggerServerEvent('hud:server:GainStress', math.random(8, 15))
+                                TriggerServerEvent('hud:server:gain:stress', math.random(8, 15))
                             end
 
                             SafeCracked = false
@@ -599,7 +517,6 @@ function CollectSafeMoney()
                                 currentSafe = 0
                                 QBCore.Functions.Notify("Grabbed the loot", "success")
                                 takeAnim()
-                                TriggerServerEvent('qb-robbery:server:succesHeist')
                                 SafeCracked = false
                                 Cracked = false
                             else
@@ -613,7 +530,7 @@ function CollectSafeMoney()
                         QBCore.Functions.Notify("Not Enough Police (".. Config.MinimumStoreRobberyPolice .." Required)", "error")
                     end
                 else
-                    QBCore.Functions.Notify("Safe appears empty!", "error")
+                    QBCore.Functions.Notify("Safe appears broken!", "error")
                 end
             end
         end

@@ -1,7 +1,7 @@
 Config = {}
 
-Config.minEarn = 500
-Config.maxEarn = 1500
+Config.minEarn = 1000
+Config.maxEarn = 3500
 Config.RegisterEarnings = math.random(Config.minEarn, Config.maxEarn)
 Config.MinimumStoreRobberyPolice = 0
 
@@ -42,11 +42,10 @@ Config.Registers = {
 
 
 -- Time until safe opens up
-Config.SafeWait = (60000 * 3)
+Config.SafeWait = (60 * 1000) * 5
 
 Config.Safes = {
     [1] = {
-        coords = vector3(-1220.85, -916.05, 11.32),
         vector4(-43.43, -1748.3, 29.42,  52.5),
         type = "keypad",
         robbed = false,
@@ -59,7 +58,6 @@ Config.Safes = {
         camId = 5
     },
     [3] = {
-        coords = vector3(-1220.85, -916.05, 11.32),
         vector4(-1220.85, -916.05, 11.32,  229.5),
         type = "padlock",
         robbed = false,

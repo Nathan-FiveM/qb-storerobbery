@@ -1,10 +1,14 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-local cashA = 200 				--<<how much minimum you can get from a robbery
-local cashB = 300				--<< how much maximum you can get from a robbery
-local ScashA = 1000 			--<<how much minimum you can get from a robbery
-local ScashB = 1500				--<< how much maximum you can get from a robbery
 
-RegisterNetEvent('qb-storerobbery:server:takeMoney', function(register, isDone)
+
+QBCore = exports['qb-core']:GetCoreObject()
+
+local cashA = 750 				--<<how much minimum you can get from a robbery
+local cashB = 1500				--<< how much maximum you can get from a robbery
+local ScashA = 2000 			--<<how much minimum you can get from a robbery
+local ScashB = 3500				--<< how much maximum you can get from a robbery
+
+RegisterServerEvent('qb-storerobbery:server:takeMoney')
+AddEventHandler('qb-storerobbery:server:takeMoney', function(register, isDone)
     local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	-- Add some stuff if you want, this here above the if statement will trigger every 2 seconds of the animation when robbing a cash register.
@@ -23,13 +27,15 @@ RegisterNetEvent('qb-storerobbery:server:takeMoney', function(register, isDone)
     end
 end)
 
-RegisterNetEvent('qb-storerobbery:server:setRegisterStatus', function(register)
+RegisterServerEvent('qb-storerobbery:server:setRegisterStatus')
+AddEventHandler('qb-storerobbery:server:setRegisterStatus', function(register)
     Config.Registers[register].robbed   = true
     Config.Registers[register].time     = Config.resetTime
     TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, register, Config.Registers[register])
 end)
 
-RegisterNetEvent('qb-storerobbery:server:setSafeStatus', function(safe)
+RegisterServerEvent('qb-storerobbery:server:setSafeStatus')
+AddEventHandler('qb-storerobbery:server:setSafeStatus', function(safe)
     TriggerClientEvent('qb-storerobbery:client:setSafeStatus', -1, safe, true)
     Config.Safes[safe].robbed = true
 
@@ -39,10 +45,11 @@ RegisterNetEvent('qb-storerobbery:server:setSafeStatus', function(safe)
     end)
 end)
 
-RegisterNetEvent('qb-storerobbery:server:SafeReward', function(safe)
+RegisterServerEvent('qb-storerobbery:server:SafeReward')
+AddEventHandler('qb-storerobbery:server:SafeReward', function(safe)
     local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
-	local bags = math.random(3,5)
+	local bags = math.random(2,5)
 	local info = {
 		worth = math.random(ScashA, ScashB)
 	}
@@ -54,30 +61,14 @@ RegisterNetEvent('qb-storerobbery:server:SafeReward', function(safe)
             Player.Functions.AddItem("rolex", 1)
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items["rolex"], "add")
         if luck == odd then
-            Wait(500)
+            Citizen.Wait(500)
             Player.Functions.AddItem("goldbar", 1)
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items["goldbar"], "add")
         end
     end
 end)
 
-RegisterNetEvent('qb-storerobbery:server:callCops', function(type, safe, streetLabel, coords)
-    local cameraId = 4
-    if type == "safe" then
-        cameraId = Config.Safes[safe].camId
-    else
-        cameraId = Config.Registers[safe].camId
-    end
-    local alertData = {
-        title = "10-33 | Shop Robbery",
-        coords = {x = coords.x, y = coords.y, z = coords.z},
-        description = "Someone Is Trying To Rob A Store At "..streetLabel.." (CAMERA ID: "..cameraId..")"
-    }
-    TriggerClientEvent("qb-storerobbery:client:robberyCall", -1, type, safe, streetLabel, coords)
-    TriggerClientEvent("qb-phone:client:addPoliceAlert", -1, alertData)
-end)
-
-CreateThread(function()
+Citizen.CreateThread(function()
     while true do
         local toSend = {}
         for k, v in ipairs(Config.Registers) do
@@ -88,7 +79,8 @@ CreateThread(function()
                 if Config.Registers[k].robbed then
                     Config.Registers[k].time = 0
                     Config.Registers[k].robbed = false
-					toSend[#toSend+1] = Config.Registers[k]
+
+                    table.insert(toSend, Config.Registers[k])
                 end
             end
         end
@@ -98,7 +90,7 @@ CreateThread(function()
             TriggerClientEvent('qb-storerobbery:client:setRegisterStatus', -1, toSend, false)
         end
 
-        Wait(Config.tickInterval)
+        Citizen.Wait(Config.tickInterval)
     end
 end)
 
@@ -110,7 +102,8 @@ QBCore.Functions.CreateCallback('qb-storerobbery:server:getSafeStatus', function
     cb(Config.Safes)
 end)
 
-RegisterNetEvent('qb-storerobbery:server:CheckItem', function()
+RegisterServerEvent('qb-storerobbery:server:CheckItem')
+AddEventHandler('qb-storerobbery:server:CheckItem', function()
     local Player = QBCore.Functions.GetPlayer(source)
     local ItemData = Player.Functions.GetItemByName("safecracker")
     if ItemData ~= nil then
@@ -118,4 +111,26 @@ RegisterNetEvent('qb-storerobbery:server:CheckItem', function()
     else
         TriggerClientEvent('QBCore:Notify', source, "You appear to be missing something?")
     end
+end)
+
+RegisterServerEvent('qb-storerobbery:server:callCops')
+AddEventHandler('qb-storerobbery:server:callCops', function(type, safe, streetLabel, coords)
+
+    local cameraId = 4
+    if type == "safe" then
+        cameraId = Config.Safes[safe].camId
+    else
+        cameraId = Config.Registers[safe].camId
+    end
+
+    TriggerClientEvent("dispatch:storerobbery", -1, coords, cameraId) -- Project Sloth Dispatch
+
+    -- // QB PHONE PD ALERT \\ --
+    local alertData = {
+        title = "10-90 | Shop Robbery",
+        coords = {x = coords.x, y = coords.y, z = coords.z},
+        description = "Someone Is Trying To Rob A Store At "..streetLabel.." (CAMERA ID: "..cameraId..")"
+    }
+    TriggerClientEvent("qb-phone:client:addPoliceAlert", -1, alertData)
+    
 end)
