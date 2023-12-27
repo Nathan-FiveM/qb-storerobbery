@@ -1,11 +1,46 @@
 Config = {}
 
-Config.minEarn = 1000
-Config.maxEarn = 3500
-Config.RegisterEarnings = math.random(Config.minEarn, Config.maxEarn)
-Config.MinimumStoreRobberyPolice = 0
+Config.MinimumStoreRobberyPolice = 1
 
--- Set Up for Gabz 24/7 & Liquor Stores
+Config.PSBuffs = true
+Config.RegisterItem = "rolls"
+Config.RegisterItemMin = 35
+Config.RegisterItemMax = 75
+Config.RegisterLuckyItemMin = 45
+Config.RegisterLuckyItemMax = 75
+Config.RegisterCash = true -- Gives the robber a small amount of cash
+Config.RegisterCashMin = 100
+Config.RegisterCashMax = 200
+Config.RegisterLuckyCashMin = 150
+Config.RegisterLuckyCashMax = 300
+Config.SafeCrackerChance = 10 -- 10/100 Chance of getting a safecracker
+Config.MinLockPickTime = 10000 -- 10 Seconds
+Config.MaxLockPickTime = 20000 -- 20 Seconds
+
+Config.SafeItem = "markedbills"
+Config.SafeItemMin = 1
+Config.SafeItemMax = 3
+Config.SafeItemMinWorth = 2000
+Config.SafeItemMaxWorth = 3500
+Config.SafeLuckyItemMin = 2
+Config.SafeLuckyItemMax = 4
+Config.SafeLuckyItemMinWorth = 2500
+Config.SafeLuckyItemMaxWorth = 4000
+
+Config.LuckySafeItems = true
+Config.LuckySafeItem1 = "rolex"
+Config.Item1Amount = math.random(3,6)
+Config.LuckyItem1Amount = math.random(6,12)
+Config.LuckySafeItem2 = "goldbar"
+Config.Item2Amount = math.random(1,2)
+Config.LuckyItem2Amount = math.random(1,4)
+
+Config.OldPSDispatch = false
+
+-- Lockpick System
+Config.QBLock = false -- Old System
+Config.OXSkill = true -- ox_lib version
+
 Config.Registers = {
     [1] = {vector3(-47.24,-1757.65, 29.53), robbed = false, time = 0, safeKey = 1, camId = 4},
     [2] = {vector3(-48.58,-1759.21, 29.59), robbed = false, time = 0, safeKey = 1, camId = 4},
@@ -45,7 +80,7 @@ Config.Registers = {
 
 -- Time until safe opens up
 Config.SafeWait = (60 * 1000) * 3
--- Set Up for Gabz 24/7 & Liquor Stores
+
 Config.Safes = {
     [1] = {vector4(-43.43, -1748.3, 29.42,  52.5), type = "keypad", robbed = false, camId = 4}, 
     [2] = {vector4(-1478.94, -375.5, 39.16,  229.5), type = "padlock", robbed = false, camId = 5},
@@ -69,12 +104,85 @@ Config.Safes = {
     [20] = {vector3(2549.458, 387.8457, 108.62), type = "keypad", robbed = false, camId = 31},
 }
 
-Config.resetTime = (60 * 1000) * 30
+Config.resetTime = (60 * 1000) * 45
 Config.tickInterval = 1000
 
 Config.MaleNoHandshoes = {
-    [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [8] = true, [9] = true, [10] = true, [11] = true, [12] = true, [13] = true, [14] = true, [15] = true, [18] = true, [26] = true, [52] = true, [53] = true, [54] = true, [55] = true, [56] = true, [57] = true, [58] = true, [59] = true, [60] = true, [61] = true, [62] = true, [112] = true, [113] = true, [114] = true, [118] = true, [125] = true, [132] = true,
+    [0] = true,
+    [1] = true,
+    [2] = true,
+    [3] = true,
+    [4] = true,
+    [5] = true,
+    [6] = true,
+    [7] = true,
+    [8] = true,
+    [9] = true,
+    [10] = true,
+    [11] = true,
+    [12] = true,
+    [13] = true,
+    [14] = true,
+    [15] = true,
+    [18] = true,
+    [26] = true,
+    [52] = true,
+    [53] = true,
+    [54] = true,
+    [55] = true,
+    [56] = true,
+    [57] = true,
+    [58] = true,
+    [59] = true,
+    [60] = true,
+    [61] = true,
+    [62] = true,
+    [112] = true,
+    [113] = true,
+    [114] = true,
+    [118] = true,
+    [125] = true,
+    [132] = true,
 }
 Config.FemaleNoHandshoes = {
-    [0] = true, [1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [8] = true, [9] = true, [10] = true, [11] = true, [12] = true, [13] = true, [14] = true, [15] = true, [19] = true, [59] = true, [60] = true, [61] = true, [62] = true, [63] = true, [64] = true, [65] = true, [66] = true, [67] = true, [68] = true, [69] = true, [70] = true, [71] = true, [129] = true, [130] = true, [131] = true, [135] = true, [142] = true, [149] = true, [153] = true, [157] = true, [161] = true, [165] = true,
+    [0] = true,
+    [1] = true,
+    [2] = true,
+    [3] = true,
+    [4] = true,
+    [5] = true,
+    [6] = true,
+    [7] = true,
+    [8] = true,
+    [9] = true,
+    [10] = true,
+    [11] = true,
+    [12] = true,
+    [13] = true,
+    [14] = true,
+    [15] = true,
+    [19] = true,
+    [59] = true,
+    [60] = true,
+    [61] = true,
+    [62] = true,
+    [63] = true,
+    [64] = true,
+    [65] = true,
+    [66] = true,
+    [67] = true,
+    [68] = true,
+    [69] = true,
+    [70] = true,
+    [71] = true,
+    [129] = true,
+    [130] = true,
+    [131] = true,
+    [135] = true,
+    [142] = true,
+    [149] = true,
+    [153] = true,
+    [157] = true,
+    [161] = true,
+    [165] = true,
 }
