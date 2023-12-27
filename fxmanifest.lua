@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 description 'QB-StoreRobbery'
-version '1.1.0'
+version '1.2.0'
 editor 'Nathan#8860'
 
 shared_scripts { 

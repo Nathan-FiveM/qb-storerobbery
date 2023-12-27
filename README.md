@@ -1,6 +1,6 @@
 # qb-storerobbery
 Store Robberies For QB-Core
-Edited by Nathan#8860
+Edited by https://github.com/Nathan-FiveM/
 
 # Reworked qb-storerobbery
 Hit the cash registers to get quick cash (10-20 secs [advanced lockpick], 20-40 secs [lockpick])
@@ -11,5 +11,11 @@ Target options added to the safe for opening and grabbing loot
 Uses a circle based lock for the cash registers
 
 # Dependancies
+- qb-core - https://github.com/qbcore-framework/qb-core
+- qb/lj-inventory https://github.com/qbcore-framework/qb-inventory
 - qb-lock - https://github.com/Nathan-FiveM/qb-lock
+or
+- ox_lib - https://github.com/overextended/ox_lib
+
+Hacking game for the safe can be changed to whatever you want.
 - memorygame_2 - https://github.com/Nathan-FiveM/memorygame_2

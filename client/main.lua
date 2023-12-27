@@ -77,14 +77,30 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
             if CurrentCops >= Config.MinimumStoreRobberyPolice then
                 currentRegister = k
                 if isAdvanced then
-                    local seconds = math.random(8,12)
-                    local circles = math.random(2,5)
-                    local success = exports['qb-lock']:StartLockPickCircle(circles, seconds, success)
+                    if Config.QBLock then
+                        local seconds = math.random(8,12)
+                        local circles = math.random(2,5)
+                        success = exports['qb-lock']:StartLockPickCircle(circles, seconds, success)
+                    elseif Config.OXSkill then
+                        local loop = {}
+                        local loopCount = 0
+                        local loops = math.random(2,5) -- How many times they have to click for the skill check
+                        local SpeedDifficulty = 1.00
+                    
+                        while loopCount < loops do
+                            loopCount = loopCount + 1
+                            loop[#loop+1] = {
+                                areaSize = math.random(35, 60),
+                                speedMultiplier = SpeedDifficulty -- Easy = 1, Medium = 1.5, Hard = 1.75
+                            }
+                        end
+                        success = lib.skillCheck(loop, {'1', '2', '3', '4'})
+                    end
 
                     if success then
                         if currentRegister ~= 0 then
                             TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
-                            local lockpickTime = math.random(60000, 120000)
+                            local lockpickTime = math.random(Config.MinLockPickTime, Config.MaxLockPickTime)
                             LockpickDoorAnim(lockpickTime)
                             QBCore.Functions.Progressbar("search_register", "Emptying register..", lockpickTime, false, true, {
                                 disableMovement = true,
@@ -137,9 +153,28 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                         end
                     end
                 else
-                    local seconds = math.random(6,10)
-                    local circles = math.random(3,5)
-                    local success = exports['qb-lock']:StartLockPickCircle(circles, seconds, success)
+                    
+                    if Config.QBLock then
+                        local seconds = math.random(6,10)
+                        local circles = math.random(3,5)
+                        local success = exports['qb-lock']:StartLockPickCircle(circles, seconds, success)
+                    elseif Config.OXSkill then
+                        local loop = {}
+                        local loopCount = 0
+                        local loops = math.random(2,5) -- How many times they have to click for the skill check
+                        local SpeedDifficulty = 1.15
+                    
+                        while loopCount < loops do
+                            loopCount = loopCount + 1
+                            loop[#loop+1] = {
+                                areaSize = math.random(30, 50),
+                                speedMultiplier = SpeedDifficulty -- Easy = 1, Medium = 1.5, Hard = 1.75
+                            }
+                        end
+                    
+                        local success = lib.skillCheck(loop, {'1', '2', '3', '4'})
+                    end
+
                     if success then
                         if currentRegister ~= 0 then
                             TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
@@ -199,15 +234,25 @@ RegisterNetEvent('lockpicks:UseLockpick', function(isAdvanced)
                     TriggerServerEvent("evidence:server:CreateFingerDrop", pos)
                 end
                 if not copsCalled then
-                    local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                    local street1 = GetStreetNameFromHashKey(s1)
-                    local street2 = GetStreetNameFromHashKey(s2)
-                    local streetLabel = street1
-                    if street2 ~= nil then
-                        streetLabel = streetLabel .. " " .. street2
+                    if Config.OldPSDispatch then
+                        local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
+                        local street1 = GetStreetNameFromHashKey(s1)
+                        local street2 = GetStreetNameFromHashKey(s2)
+                        local streetLabel = street1
+                        if street2 ~= nil then
+                            streetLabel = streetLabel .. " " .. street2
+                        end
+                        TriggerServerEvent("qb-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
+                        copsCalled = true
+                    else
+                        local camId
+                        camId = Config.Registers[currentRegister].camId
+
+                        if not copsCalled then
+                            exports['ps-dispatch']:StoreRobbery(camId)
+                            copsCalled = true
+                        end
                     end
-                    TriggerServerEvent("qb-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
-                    copsCalled = true
                 end
 
             else
@@ -231,9 +276,7 @@ RegisterNetEvent('qb-storerobbery:client:hacksafe', function()
             elseif Cracked then
                 QBCore.Functions.Notify("Security lock active!", "error")
             elseif not Config.Safes[safe].robbed then
-                TriggerServerEvent("QBCore:Server:RemoveItem", "safecracker", 1)
-                TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["safecracker"], "remove")
-                MemoryGame()
+                TriggerServerEvent("qb-storerobbery:removecracker")
             else
                 QBCore.Functions.Notify("HOW?! Contact a Staff Member", "error")
             end
@@ -241,6 +284,16 @@ RegisterNetEvent('qb-storerobbery:client:hacksafe', function()
     end
 end)
 
+RegisterNetEvent('qb-storerobbery:client:hackthesafe', function()
+    local pos = GetEntityCoords(PlayerPedId())
+    for safe,_ in pairs(Config.Safes) do
+        local dist = #(pos - Config.Safes[safe][1].xyz)
+        if dist < 1.0 then
+            TriggerEvent("inventory:client:ItemBox", QBCore.Shared.Items["safecracker"], "remove")
+            MemoryGame()
+        end
+    end
+end)
 RegisterNetEvent('qb-storerobbery:client:collectsafe', function()
     CollectSafeMoney()
 end)
@@ -271,9 +324,26 @@ function lockpickTill()
         if dist <= 1 and not Config.Registers[k].robbed then
             if CurrentCops >= Config.MinimumStoreRobberyPolice then
                 currentRegister = k
-                local seconds = math.random(8,12)
-                local circles = math.random(2,5)
-                local success = exports['qb-lock']:StartLockPickCircle(circles, seconds, success)
+                if Config.QBLock then
+                    local seconds = math.random(8,12)
+                    local circles = math.random(2,5)
+                    success = exports['qb-lock']:StartLockPickCircle(circles, seconds, success)
+                elseif Config.OXSkill then
+                    local loop = {}
+                    local loopCount = 0
+                    local loops = math.random(2,5) -- How many times they have to click for the skill check
+                    local SpeedDifficulty = 1.00
+                
+                    while loopCount < loops do
+                        loopCount = loopCount + 1
+                        loop[#loop+1] = {
+                            areaSize = math.random(30, 50),
+                            speedMultiplier = SpeedDifficulty -- Easy = 1, Medium = 1.5, Hard = 1.75
+                        }
+                    end
+                
+                    success = lib.skillCheck(loop, {'1', '2', '3', '4'})
+                end
                 if success then
                     if currentRegister ~= 0 then
                         TriggerServerEvent('qb-storerobbery:server:setRegisterStatus', currentRegister)
@@ -320,15 +390,25 @@ function lockpickTill()
                 end
 
                 if not copsCalled then
-                    local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                    local street1 = GetStreetNameFromHashKey(s1)
-                    local street2 = GetStreetNameFromHashKey(s2)
-                    local streetLabel = street1
-                    if street2 ~= nil then
-                        streetLabel = streetLabel .. " " .. street2
+                    if Config.OldPSDispatch then
+                        local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
+                        local street1 = GetStreetNameFromHashKey(s1)
+                        local street2 = GetStreetNameFromHashKey(s2)
+                        local streetLabel = street1
+                        if street2 ~= nil then
+                            streetLabel = streetLabel .. " " .. street2
+                        end
+                        TriggerServerEvent("qb-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
+                        copsCalled = true
+                    else
+                        local camId
+                        camId = Config.Registers[currentRegister].camId
+
+                        if not copsCalled then
+                            exports['ps-dispatch']:StoreRobbery(camId)
+                            copsCalled = true
+                        end
                     end
-                    TriggerServerEvent("qb-storerobbery:server:callCops", "cashier", currentRegister, streetLabel, pos)
-                    copsCalled = true
                 end
 
             else
@@ -430,7 +510,7 @@ function MemoryGame()
                         
                         -- // MINI GAME \\ --
                         exports["memorygame_2"]:thermiteminigame(6, 3, 2, 20,
-                        function() -- Success
+                            function() -- Success
 
                             if math.random(1, 100) <= 35 then
                                 TriggerServerEvent('hud:server:gain:stress', math.random(5, 8))
@@ -442,7 +522,7 @@ function MemoryGame()
                             if currentSafe ~= 0 then
                                 if not Config.Safes[currentSafe].robbed then
                                     QBCore.Functions.Notify("Safe Cracked, wait nearby!")
-                                    Wait(300000)
+                                    Wait(Config.SafeWait)
                                     if dist < 50 then
                                         SafeCracked = true
                                         Cracked = false
@@ -457,7 +537,7 @@ function MemoryGame()
 
                         end,
 
-                        function() -- Failure
+                            function() -- Failure
 
                             if math.random(1, 100) <= 75 then
                                 TriggerServerEvent('hud:server:gain:stress', math.random(8, 15))
@@ -472,16 +552,26 @@ function MemoryGame()
                         -- // MINI GAME \\ --
 
                         if not copsCalled then
-                            local pos = GetEntityCoords(PlayerPedId())
-                            local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
-                            local street1 = GetStreetNameFromHashKey(s1)
-                            local street2 = GetStreetNameFromHashKey(s2)
-                            local streetLabel = street1
-                            if street2 ~= nil then
-                                streetLabel = streetLabel .. " " .. street2
+                            if Config.OldPSDispatch then
+                                local pos = GetEntityCoords(PlayerPedId())
+                                local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
+                                local street1 = GetStreetNameFromHashKey(s1)
+                                local street2 = GetStreetNameFromHashKey(s2)
+                                local streetLabel = street1
+                                if street2 ~= nil then
+                                    streetLabel = streetLabel .. " " .. street2
+                                end
+                                TriggerServerEvent("qb-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
+                                copsCalled = true
+                            else
+                                local camId
+                                camId = Config.Safes[safe].camId
+
+                                if not copsCalled then
+                                    exports['ps-dispatch']:StoreRobbery(camId)
+                                    copsCalled = true
+                                end
                             end
-                            TriggerServerEvent("qb-storerobbery:server:callCops", "safe", currentSafe, streetLabel, pos)
-                            copsCalled = true
                         end
                     else
                         QBCore.Functions.Notify("Not Enough Police (".. Config.MinimumStoreRobberyPolice .." Required)", "error")

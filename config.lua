@@ -5,6 +5,7 @@ Config.maxEarn = 3500
 Config.RegisterEarnings = math.random(Config.minEarn, Config.maxEarn)
 Config.MinimumStoreRobberyPolice = 0
 
+-- Set Up for Gabz 24/7 & Liquor Stores
 Config.Registers = {
     [1] = {vector3(-47.24,-1757.65, 29.53), robbed = false, time = 0, safeKey = 1, camId = 4},
     [2] = {vector3(-48.58,-1759.21, 29.59), robbed = false, time = 0, safeKey = 1, camId = 4},
@@ -38,47 +39,34 @@ Config.Registers = {
     [30] = {vector3(-161.07, 6321.23, 31.5), robbed = false, time = 0, safeKey = 18, camId = 27},
     [31] = {vector3(160.52, 6641.74, 31.6), robbed = false, time = 0, safeKey = 19, camId = 28},
     [32] = {vector3(162.16, 6643.22, 31.6), robbed = false, time = 0, safeKey = 19, camId = 29},
+    [33] = {vector3(2555.655, 381.3199, 108.62), robbed = false, time = 0, safeKey = 19, camId = 31},
+    [34] = {vector3(2557.440, 381.2325, 108.62), robbed = false, time = 0, safeKey = 19, camId = 31},
 }
 
-
 -- Time until safe opens up
-Config.SafeWait = (60 * 1000) * 5
-
+Config.SafeWait = (60 * 1000) * 3
+-- Set Up for Gabz 24/7 & Liquor Stores
 Config.Safes = {
-    [1] = {
-        vector4(-43.43, -1748.3, 29.42,  52.5),
-        type = "keypad",
-        robbed = false,
-        camId = 4
-    }, 
-    [2] = {
-        vector4(-1478.94, -375.5, 39.16,  229.5),
-        type = "padlock",
-        robbed = false,
-        camId = 5
-    },
-    [3] = {
-        vector4(-1220.85, -916.05, 11.32,  229.5),
-        type = "padlock",
-        robbed = false,
-        camId = 6
-    },
+    [1] = {vector4(-43.43, -1748.3, 29.42,  52.5), type = "keypad", robbed = false, camId = 4}, 
+    [2] = {vector4(-1478.94, -375.5, 39.16,  229.5), type = "padlock", robbed = false, camId = 5},
+    [3] = {vector4(-1220.85, -916.05, 11.32,  229.5), type = "padlock", robbed = false, camId = 6},
     [4] = {vector4(-709.74, -904.15, 19.21, 229.5), type = "keypad", robbed = false, camId = 7},
-    [5] = {vector3(28.21, -1339.14, 29.49), type = "keypad", robbed = false, camId = 8},
+    [5] = {vector3(31.24777, -1339.28, 29.496), type = "keypad", robbed = false, camId = 8},
     [6] = {vector3(1126.77, -980.1, 45.41), type = "padlock", robbed = false, camId = 9},
     [7] = {vector3(1159.46, -314.05, 69.2), type = "keypad", robbed = false, camId = 10},
-    [8] = {vector3(378.17, 333.44, 103.56), type = "keypad", robbed = false, camId = 11},
+    [8] = {vector3(381.0706, 332.5332, 103.56), type = "keypad", robbed = false, camId = 11},
     [9] = {vector3(-1829.27, 798.76, 138.19), type = "keypad", robbed = false, camId = 12},
     [10] = {vector3(-2959.64, 387.08, 14.04), type = "padlock", robbed = false, camId = 13},
-    [11] = {vector3(-3047.88, 585.61, 7.9), type = "keypad", robbed = false, camId = 14},
-    [12] = {vector3(-3250.02, 1004.43, 12.83), type = "keypad", robbed = false, camId = 15},
-    [13] = {vector3(546.41, 2662.8, 42.15), type = "keypad", robbed = false, camId = 16},
+    [11] = {vector3(-3048.66, 588.4980, 7.9088), type = "keypad", robbed = false, camId = 14},
+    [12] = {vector3(-3249.69, 1007.464, 12.830), type = "keypad", robbed = false, camId = 15},
+    [13] = {vector3(543.7808, 2662.557, 42.156), type = "keypad", robbed = false, camId = 16},
     [14] = {vector3(1169.31, 2717.79, 37.15), type = "padlock", robbed = false, camId = 17},
-    [15] = {vector3(2672.69, 3286.63, 55.24), type = "keypad", robbed = false, camId = 18},
-    [16] = {vector3(1959.26, 3748.92, 32.34), type = "keypad", robbed = false, camId = 19},
-    [17] = {vector3(1734.78, 6420.84, 35.03), type = "keypad", robbed = false, camId = 20},
+    [15] = {vector3(2674.229, 3289.220, 55.241), type = "keypad", robbed = false, camId = 18},
+    [16] = {vector3(1961.861, 3750.246, 32.343), type = "keypad", robbed = false, camId = 19},
+    [17] = {vector3(1737.493, 6419.432, 35.037), type = "keypad", robbed = false, camId = 20},
     [18] = {vector3(-168.40, 6318.80, 30.58), type = "padlock", robbed = false, camId = 27},
     [19] = {vector3(168.95, 6644.74, 31.70), type = "keypad", robbed = false, camId = 30},
+    [20] = {vector3(2549.458, 387.8457, 108.62), type = "keypad", robbed = false, camId = 31},
 }
 
 Config.resetTime = (60 * 1000) * 30
