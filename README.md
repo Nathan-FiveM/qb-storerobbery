@@ -1,6 +1,8 @@
 # qb-storerobbery
 Store Robberies For QB-Core
 Edited by https://github.com/Nathan-FiveM/
+Discord 
+https://discord.com/invite/UtGyV3Whjb
 
 # Reworked qb-storerobbery
 Hit the cash registers to get quick cash (10-20 secs [advanced lockpick], 20-40 secs [lockpick])
